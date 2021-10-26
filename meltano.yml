@@ -1,0 +1,66 @@
+version: 1
+send_anonymous_usage_stats: true
+project_id: 3e6a4a0d-c523-46b5-b116-b8f0f051cb3a
+plugins:
+  extractors:
+  - name: tap-shopify
+    variant: singer-io
+    pip_url: tap-shopify
+    config:
+      start_date: '2021-10-01'
+    schema:
+      orders:
+        subtotal_price_set:
+          type:
+          - object
+          - 'null'
+        total_discounts_set:
+          type:
+          - object
+          - 'null'
+        total_line_items_price_set:
+          type:
+          - object
+          - 'null'
+        total_price_set:
+          type:
+          - object
+          - 'null'
+        total_shipping_price_set:
+          type:
+          - object
+          - 'null'
+        total_tax_set:
+          type:
+          - object
+          - 'null'
+        discounted_price_set:
+          type:
+          - object
+          - 'null'
+        price_set:
+          type:
+          - object
+          - 'null'
+  loaders:
+  - name: target-athena
+    namespace: target_athena
+    pip_url: git+https://github.com/dataops-tk/target-athena.git
+    executable: target-athena
+    settings:
+    - name: s3_bucket
+      kind: password
+    - name: athena_database
+      kind: password
+    - name: aws_region
+    - name: aws_access_key_id
+      kind: password
+    - name: aws_secret_access_key
+      kind: password
+    - name: s3_staging_dir
+      kind: password
+    - name: compression
+    config:
+      aws_region: us-west-2
+      schema_name: shopify
+      object_format: jsonl
